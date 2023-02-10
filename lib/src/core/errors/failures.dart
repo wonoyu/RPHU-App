@@ -63,7 +63,11 @@ class NullableFailure implements Failure {
   NullableFailure(this.message);
 }
 
-class UnsuccessfulResult implements Failure {}
+class UnsuccessfulResult implements Failure {
+  final String? message;
+
+  UnsuccessfulResult({this.message});
+}
 
 String errorToString(Object error) {
   final cases = {
@@ -80,6 +84,8 @@ String errorToString(Object error) {
     error is SembastFailure: 'Failed to store data to database',
     error is SaveToLocalFailure: 'Failed to store data to local storage',
     error is NullableFailure: 'The corresponding data cannot be found',
+    error is UnsuccessfulResult:
+        '${error is UnsuccessfulResult ? error.message : 'Result is unexpected'}',
     error is http.Response: error is http.Response
         ? '${error.statusCode}: ${error.reasonPhrase}'
         : 'Http Request Error'

@@ -104,6 +104,7 @@ class RPHUOrderDetailPage extends ConsumerWidget {
                     onPressed: () {
                       CustomDialogs.showUpdateRphuOrderStatusDialog(
                         context,
+                        data,
                         (action) => ref
                             .read(updateRphuOrderStatusControllerProvider
                                 .notifier)
@@ -141,7 +142,8 @@ class RPHUOrderDetailPage extends ConsumerWidget {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () => router.goNamed(AppRoutes.rphuUpdateName,
+                extra: data, params: {'id': '${data.id}'}),
             child: const Icon(Icons.edit),
           ),
         );

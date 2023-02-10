@@ -9,11 +9,18 @@ class GetRPHUOrderController extends _$GetRPHUOrderController {
   @override
   Future<List<OrderResultDataEntity>> build(
       {int? id, int? offset, int? limit, String? name}) async {
+    state = const AsyncValue.loading();
     final usecase = ref.read(getRphuOrderUsecaseProvider);
     final result = await usecase.execute();
     return result.match(
-      (failure) => [],
-      (data) => data,
+      (failure) {
+        state = const AsyncValue.data([]);
+        return [];
+      },
+      (data) {
+        state = AsyncValue.data(data);
+        return data;
+      },
     );
   }
 }

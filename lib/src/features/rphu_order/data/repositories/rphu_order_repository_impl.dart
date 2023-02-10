@@ -4,6 +4,7 @@ import 'package:rphu_app/src/features/rphu_order/data/datasources/rphu_order_loc
 import 'package:rphu_app/src/features/rphu_order/data/datasources/rphu_order_remote_datasource.dart';
 import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_order_entity.dart';
 import 'package:rphu_app/src/core/errors/failures.dart';
+import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_product_entity.dart';
 import 'package:rphu_app/src/features/rphu_order/domain/repositories/rphu_order_repository.dart';
 
 class RPHUOrderRepositoryImpl implements RPHUOrderRepository {
@@ -54,4 +55,16 @@ class RPHUOrderRepositoryImpl implements RPHUOrderRepository {
   @override
   TaskEither<Failure, String> updateRphuOrderStatus(String action, int id) =>
       remoteDatasource.updateRphuOrderStatus(action, id);
+
+  @override
+  TaskEither<Failure, List<RPHUProductDataEntity>> getRphuProduct() =>
+      remoteDatasource.getRphuProduct().chainEither(
+            (r) => Either.tryCatch(
+              () => r.map((e) => e.toEntity()).toList(),
+              (error, stackTrace) {
+                logger.e(errorToString(error), [error, stackTrace]);
+                return EntityFormattingFailure(error, stackTrace);
+              },
+            ),
+          );
 }

@@ -4,8 +4,27 @@ import 'package:rphu_app/src/core/constants/colors.dart';
 import 'package:rphu_app/src/core/routes/routes.dart';
 import 'package:rphu_app/src/features/rphu_order/presentation/controllers/get_rphu_order_controller.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
+
+  @override
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends ConsumerState<DashboardPage> with RouteAware {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppRoutes.routeObserver.subscribe(this, ModalRoute.of(context)!);
+    });
+  }
+
+  @override
+  void didPopNext() {
+    ref.invalidate(getRPHUOrderControllerProvider);
+    super.didPopNext();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,5 +78,11 @@ class DashboardPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    AppRoutes.routeObserver.unsubscribe(this);
+    super.dispose();
   }
 }

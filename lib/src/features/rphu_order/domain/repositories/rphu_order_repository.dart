@@ -6,12 +6,14 @@ import 'package:rphu_app/src/features/rphu_order/data/datasources/rphu_order_loc
 import 'package:rphu_app/src/features/rphu_order/data/datasources/rphu_order_remote_datasource.dart';
 import 'package:rphu_app/src/features/rphu_order/data/repositories/rphu_order_repository_impl.dart';
 import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_order_entity.dart';
+import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_product_entity.dart';
 
 abstract class RPHUOrderRepository {
   TaskEither<Failure, List<OrderResultDataEntity>> getRphuOrder();
   TaskEither<Failure, OrderResultDataEntity> getRphuOrderById(int id);
   TaskEither<Failure, String> deleteRphuOrder(int id);
   TaskEither<Failure, String> updateRphuOrderStatus(String action, int id);
+  TaskEither<Failure, List<RPHUProductDataEntity>> getRphuProduct();
 }
 
 final rphuOrderRepositoryProvider = Provider<RPHUOrderRepository>((ref) =>

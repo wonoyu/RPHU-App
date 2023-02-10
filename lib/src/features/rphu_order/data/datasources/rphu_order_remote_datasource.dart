@@ -9,12 +9,14 @@ import 'package:rphu_app/src/core/utils/providers.dart';
 import 'package:rphu_app/src/core/utils/util_functions.dart';
 import 'package:rphu_app/src/features/rphu_order/data/models/rphu_order_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:rphu_app/src/features/rphu_order/data/models/rphu_product_model.dart';
 
 abstract class RPHUOrderRemoteDatasource {
   TaskEither<Failure, List<OrderResultDataModel>> getRphuOrder();
   TaskEither<Failure, OrderResultDataModel> getRphuOrderById(int id);
   TaskEither<Failure, String> deleteRphuOrder(int id);
   TaskEither<Failure, String> updateRphuOrderStatus(String action, int id);
+  TaskEither<Failure, List<RPHUProductDataModel>> getRphuProduct();
 }
 
 class RPHUOrderRemoteDatasourceImpl implements RPHUOrderRemoteDatasource {
@@ -261,12 +263,21 @@ class RPHUOrderRemoteDatasourceImpl implements RPHUOrderRemoteDatasource {
         },
       ).chainEither(
         (r) {
+          logger.d(r);
           return Either<Failure, Map<String, dynamic>>.fromPredicate(
             r,
-            (r) => r['result']?['data']?['description'] == 'sukses',
             (r) {
-              logger.e('Status gagal diubah');
-              return UnsuccessfulResult();
+              if (r['error']?['message'] != null) {
+                return false;
+              }
+              return r['result']?['data']?['description'] == 'sukses';
+            },
+            (r) {
+              logger.e(
+                  '${r['error']?['data']?['message'] ?? 'Order status gagal diubah'}');
+              return UnsuccessfulResult(
+                  message:
+                      '${r['error']?['data']?['message'] ?? 'Order status gagal diubah'}');
             },
           );
         },
@@ -279,6 +290,64 @@ class RPHUOrderRemoteDatasourceImpl implements RPHUOrderRemoteDatasource {
           },
         ),
       );
+
+  @override
+  TaskEither<Failure, List<RPHUProductDataModel>> getRphuProduct() =>
+      TaskEither<Failure, http.Response>.tryCatch(
+        () async {
+          final response = await http.post(
+            api.getRphuProduct(),
+            headers: api.headers(),
+            body: jsonEncode({}),
+          );
+
+          return response;
+        },
+        (error, stackTrace) {
+          logger.e(errorToString(error), [error, stackTrace]);
+          return HttpRequestFailure(error, stackTrace);
+        },
+      )
+          // check if status code is 200, otherwise returns failure
+          .chainEither(
+            (response) => UtilFunctions.validResponseBody(
+              response,
+              (error) {
+                logger.e(errorToString(error), [error]);
+                return RequestFailure(error);
+              },
+            ),
+          )
+          // check if body is a valid json format
+          .chainEither(
+            (body) => Either.tryCatch(
+              () => jsonDecode(body),
+              (error, stackTrace) {
+                logger.e(errorToString(error), [error, stackTrace]);
+                return JsonDecodeFailure(body);
+              },
+            ),
+          )
+          // converts json to dart map, returns failure if fails
+          .chainEither(
+            (json) => Either<Failure, Map<String, dynamic>>.safeCast(
+              json,
+              (error) {
+                logger.e(errorToString(error), [error]);
+                return InvalidMapFailure(json);
+              },
+            ),
+          )
+          // format dart map to corresponding data model
+          .chainEither(
+            (map) => Either<Failure, List<RPHUProductDataModel>>.tryCatch(
+              () => RPHUProductModel.fromJson(map).result!.data!,
+              (error, stackTrace) {
+                logger.e(errorToString(error), [error, stackTrace]);
+                return FormattingFailure(error, stackTrace);
+              },
+            ),
+          );
 }
 
 final rphuOrderRemoteDatasourceProvider = Provider<RPHUOrderRemoteDatasource>(

@@ -26,4 +26,15 @@ class Api {
 
   Uri updateRphuOrderStatus(int id) =>
       Uri.parse('http://${env.baseUrl}/${env.updateStateRphuEndpoint}$id');
+
+  Uri getRphuProduct({int? id, int? offset, int? limit}) {
+    String path = env.rphuProductEndpoint;
+    if (id != null) {
+      path = '$path/$id';
+    }
+    if (offset != null && limit != null) {
+      path = '${env.rphuProductEndpoint}/$offset/$limit';
+    }
+    return Uri.parse('http://${env.baseUrl}/$path');
+  }
 }

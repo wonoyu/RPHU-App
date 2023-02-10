@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rphu_app/src/core/constants/colors.dart';
+import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_order_entity.dart';
 
 class CustomDialogs {
   static showLoadingDialog(BuildContext context) => showDialog(
@@ -56,21 +57,24 @@ class CustomDialogs {
         },
       );
 
-  static showUpdateRphuOrderStatusDialog(
-          BuildContext context, void Function(String) onUpdate) =>
+  static showUpdateRphuOrderStatusDialog(BuildContext context,
+          OrderResultDataEntity data, void Function(String) onUpdate) =>
       showDialog(
         context: context,
         builder: (context) => UpdateRPHUOrderStatusAlertDialog(
           onUpdate: onUpdate,
+          data: data,
         ),
       );
 }
 
 class UpdateRPHUOrderStatusAlertDialog extends StatefulWidget {
-  const UpdateRPHUOrderStatusAlertDialog({Key? key, required this.onUpdate})
+  const UpdateRPHUOrderStatusAlertDialog(
+      {Key? key, required this.onUpdate, required this.data})
       : super(key: key);
 
   final void Function(String) onUpdate;
+  final OrderResultDataEntity data;
 
   @override
   State<UpdateRPHUOrderStatusAlertDialog> createState() =>
@@ -80,6 +84,12 @@ class UpdateRPHUOrderStatusAlertDialog extends StatefulWidget {
 class _UpdateRPHUOrderStatusAlertDialogState
     extends State<UpdateRPHUOrderStatusAlertDialog> {
   String _selectedValue = 'draft';
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue = widget.data.state;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +127,13 @@ class _UpdateRPHUOrderStatusAlertDialogState
           child: const Text('Batal'),
         ),
         ElevatedButton(
-          onPressed: () => widget.onUpdate(_selectedValue),
+          onPressed: () {
+            if (_selectedValue == widget.data.state) {
+              Navigator.pop(context);
+              return;
+            }
+            widget.onUpdate(_selectedValue);
+          },
           child: const Text('Ubah'),
         ),
       ],

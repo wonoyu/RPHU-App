@@ -30,7 +30,7 @@ class _SystemHash {
 }
 
 String _$GetRPHUOrderControllerHash() =>
-    r'523cbe0830aa0d300073442f60fbeef7a7902c76';
+    r'4e0f62381f5f29cafa6caa40346e3dcae5cb39eb';
 
 /// See also [GetRPHUOrderController].
 class GetRPHUOrderControllerProvider

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rphu_app/src/core/errors/failures.dart';
 import 'package:rphu_app/src/core/reusable_components/custom_dialogs.dart';
 import 'package:rphu_app/src/core/reusable_components/custom_snackbars.dart';
 import 'package:rphu_app/src/core/routes/routes.dart';
@@ -42,6 +43,7 @@ extension RPHUOrderExtension on AsyncValue {
             const Duration(milliseconds: 750),
             () {
               Navigator.pop(context);
+              Navigator.pop(context);
               ref.invalidate(
                   getRPHUOrderByIdControllerProvider(int.parse(orderId)));
             },
@@ -50,7 +52,8 @@ extension RPHUOrderExtension on AsyncValue {
       },
       error: (e, st) {
         Navigator.pop(context);
-        CustomSnackbars.showErrorSnackbar(context, 'Status order gagal diubah');
+        Navigator.pop(context);
+        CustomSnackbars.showErrorSnackbar(context, errorToString(e));
       },
     );
   }
