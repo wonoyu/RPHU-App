@@ -208,10 +208,18 @@ class RPHUOrderRemoteDatasourceImpl implements RPHUOrderRemoteDatasource {
           .chainEither(
             (r) => Either<Failure, Map<String, dynamic>>.fromPredicate(
               r,
-              (r) => r['result']['result']['result'] == 'sukses',
               (r) {
-                logger.e('Data gagal terhapus');
-                return UnsuccessfulResult();
+                if (r['error']?['data']?['message'] != null) {
+                  return false;
+                }
+                return r['result']['result']['result'] == 'sukses';
+              },
+              (r) {
+                logger.e(
+                    r['error']?['data']?['message'] ?? 'Data gagal terhapus');
+                return UnsuccessfulResult(
+                    message: r['error']?['data']?['message'] ??
+                        'Data gagal terhapus');
               },
             ),
           )

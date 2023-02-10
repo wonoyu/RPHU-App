@@ -27,7 +27,7 @@ extension RPHUOrderExtension on AsyncValue {
       },
       error: (e, st) {
         Navigator.pop(context);
-        CustomSnackbars.showErrorSnackbar(context, 'Order gagal dihapus');
+        CustomSnackbars.showErrorSnackbar(context, errorToString(e));
       },
     );
   }
