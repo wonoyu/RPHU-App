@@ -32,7 +32,8 @@ extension RPHUOrderExtension on AsyncValue {
     );
   }
 
-  void onUpdateRphuOrder(BuildContext context, WidgetRef ref, String orderId) {
+  void onUpdateRphuOrderStatus(
+      BuildContext context, WidgetRef ref, String orderId) {
     whenOrNull(
       loading: () => CustomDialogs.showLoadingDialog(context),
       data: (success) {
@@ -46,6 +47,57 @@ extension RPHUOrderExtension on AsyncValue {
               Navigator.pop(context);
               ref.invalidate(
                   getRPHUOrderByIdControllerProvider(int.parse(orderId)));
+            },
+          );
+        }
+      },
+      error: (e, st) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+        CustomSnackbars.showErrorSnackbar(context, errorToString(e));
+      },
+    );
+  }
+
+  void onUpdateRphuOrder(BuildContext context, WidgetRef ref, String orderId) {
+    final router = ref.read(goRouterProvider);
+    whenOrNull(
+      loading: () => CustomDialogs.showLoadingDialog(context),
+      data: (success) {
+        if (success == 'sukses') {
+          CustomSnackbars.showSuccessSnackbar(
+              context, 'Record order berhasil diubah');
+          Future.delayed(
+            const Duration(milliseconds: 750),
+            () {
+              router.goNamed(AppRoutes.rphuDetailName, params: {'id': orderId});
+              ref.invalidate(
+                  getRPHUOrderByIdControllerProvider(int.parse(orderId)));
+            },
+          );
+        }
+      },
+      error: (e, st) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+        CustomSnackbars.showErrorSnackbar(context, errorToString(e));
+      },
+    );
+  }
+
+  void onCreateRphuOrder(BuildContext context, WidgetRef ref) {
+    final router = ref.read(goRouterProvider);
+    whenOrNull(
+      loading: () => CustomDialogs.showLoadingDialog(context),
+      data: (success) {
+        if (success == '201') {
+          CustomSnackbars.showSuccessSnackbar(
+              context, 'Record order berhasil dibuat');
+          Future.delayed(
+            const Duration(milliseconds: 750),
+            () {
+              router.goNamed(AppRoutes.homeName);
+              ref.invalidate(getRPHUOrderControllerProvider);
             },
           );
         }

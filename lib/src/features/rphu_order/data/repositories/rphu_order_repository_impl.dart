@@ -67,4 +67,21 @@ class RPHUOrderRepositoryImpl implements RPHUOrderRepository {
               },
             ),
           );
+
+  @override
+  TaskEither<Failure, String> updateRphuOrder(
+          int id,
+          String description,
+          String date,
+          List<List> fromIds,
+          List<List> toIds,
+          List<List> byProductIds) =>
+      remoteDatasource.updateRphuOrder(
+          id, description, date, fromIds, toIds, byProductIds);
+
+  @override
+  TaskEither<Failure, String> createRphuOrder(String description, String date,
+          List<List> fromIds, List<List> toIds, List<List> byProductIds) =>
+      remoteDatasource.createRphuOrder(
+          description, date, fromIds, toIds, byProductIds);
 }

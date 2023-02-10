@@ -24,7 +24,7 @@ class RPHUOrderDetailPage extends ConsumerWidget {
         (previous, next) => next.onDeleteRphuOrder(context, ref));
     ref.listen(
         updateRphuOrderStatusControllerProvider,
-        (previous, next) => next.onUpdateRphuOrder(
+        (previous, next) => next.onUpdateRphuOrderStatus(
             context, ref, router.location.replaceAll(RegExp(r'[^0-9]'), '')));
     return state.when(
       data: (data) {

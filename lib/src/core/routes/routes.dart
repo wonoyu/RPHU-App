@@ -6,6 +6,7 @@ import 'package:rphu_app/src/features/home/presentation/controllers/check_onboar
 import 'package:rphu_app/src/features/home/presentation/pages/dashboard_page.dart';
 import 'package:rphu_app/src/features/home/presentation/pages/onboarding_page.dart';
 import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_order_entity.dart';
+import 'package:rphu_app/src/features/rphu_order/presentation/pages/rphu_order_create_page.dart';
 import 'package:rphu_app/src/features/rphu_order/presentation/pages/rphu_order_detail_page.dart';
 import 'package:rphu_app/src/features/rphu_order/presentation/pages/rphu_order_update_page.dart';
 
@@ -17,12 +18,14 @@ class AppRoutes {
   // sub route paths
   static const rphuDetail = 'rphu/order/:id';
   static const rphuUpdate = 'update';
+  static const rphuCreate = 'rphu/create';
 
   // route names
   static const homeName = 'home';
   static const onboardingName = 'onboarding';
   static const rphuDetailName = 'rphuDetail';
   static const rphuUpdateName = 'update';
+  static const rphuCreateName = 'create';
 
   // navigation observers
   static RouteObserver routeObserver = RouteObserver();
@@ -61,6 +64,13 @@ final goRouterProvider = Provider.autoDispose<GoRouter>(
                   },
                 ),
               ],
+            ),
+            GoRoute(
+              path: AppRoutes.rphuCreate,
+              name: AppRoutes.rphuCreateName,
+              pageBuilder: (context, state) {
+                return const CupertinoPage(child: RPHUOrderCreatePage());
+              },
             ),
           ],
         ),

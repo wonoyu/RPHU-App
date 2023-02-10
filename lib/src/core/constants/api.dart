@@ -37,4 +37,10 @@ class Api {
     }
     return Uri.parse('http://${env.baseUrl}/$path');
   }
+
+  Uri updateRphuOrder(int id) =>
+      Uri.parse('http://${env.baseUrl}/${env.updateRphuEndpoint}$id');
+
+  Uri createRphuOrder() =>
+      Uri.parse('http://${env.baseUrl}/${env.createRphuEndpoint}');
 }

@@ -14,6 +14,21 @@ abstract class RPHUOrderRepository {
   TaskEither<Failure, String> deleteRphuOrder(int id);
   TaskEither<Failure, String> updateRphuOrderStatus(String action, int id);
   TaskEither<Failure, List<RPHUProductDataEntity>> getRphuProduct();
+  TaskEither<Failure, String> updateRphuOrder(
+    int id,
+    String description,
+    String date,
+    List<List<dynamic>> fromIds,
+    List<List<dynamic>> toIds,
+    List<List<dynamic>> byProductIds,
+  );
+  TaskEither<Failure, String> createRphuOrder(
+    String description,
+    String date,
+    List<List<dynamic>> fromIds,
+    List<List<dynamic>> toIds,
+    List<List<dynamic>> byProductIds,
+  );
 }
 
 final rphuOrderRepositoryProvider = Provider<RPHUOrderRepository>((ref) =>

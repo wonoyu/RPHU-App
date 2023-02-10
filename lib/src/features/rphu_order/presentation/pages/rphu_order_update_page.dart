@@ -7,6 +7,8 @@ import 'package:rphu_app/src/core/reusable_components/custom_snackbars.dart';
 import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_order_entity.dart';
 import 'package:rphu_app/src/features/rphu_order/domain/entities/rphu_product_entity.dart';
 import 'package:rphu_app/src/features/rphu_order/presentation/controllers/get_rphu_product_controller.dart';
+import 'package:rphu_app/src/features/rphu_order/presentation/controllers/update_rphu_order_controller.dart';
+import 'package:rphu_app/src/features/rphu_order/presentation/rphu_order_extensions.dart';
 
 class RPHUOrderUpdatePage extends ConsumerStatefulWidget {
   const RPHUOrderUpdatePage({super.key, required this.data});
@@ -62,6 +64,10 @@ class _RPHUOrderUpdatePageState extends ConsumerState<RPHUOrderUpdatePage> {
   @override
   Widget build(BuildContext context) {
     final products = ref.watch(getRPHUProductControllerProvider);
+    ref.listen(
+        updateRphuOrderControllerProvider,
+        (previous, next) =>
+            next.onUpdateRphuOrder(context, ref, widget.data.id.toString()));
     return Scaffold(
       appBar: AppBar(
         title: const Text('Update Order'),
@@ -379,7 +385,7 @@ class _RPHUOrderUpdatePageState extends ConsumerState<RPHUOrderUpdatePage> {
                       ],
                     ),
                   const SizedBox(height: 8.0),
-                  ..._toIds.map(
+                  ..._byProductIds.map(
                     (e) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: TextFormField(
@@ -388,8 +394,8 @@ class _RPHUOrderUpdatePageState extends ConsumerState<RPHUOrderUpdatePage> {
                         decoration: InputDecoration(
                           suffixIcon: IconButton(
                             onPressed: () {
-                              if (_toIds.length > 1) {
-                                setState(() => _toIds.remove(e));
+                              if (_byProductIds.length > 1) {
+                                setState(() => _byProductIds.remove(e));
                               }
                             },
                             icon: const Icon(Icons.delete),
@@ -411,7 +417,23 @@ class _RPHUOrderUpdatePageState extends ConsumerState<RPHUOrderUpdatePage> {
                 children: [
                   const Spacer(),
                   ElevatedButton(
-                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        fixedSize:
+                            Size.fromWidth(MediaQuery.of(context).size.width)),
+                    onPressed: () {
+                      ref
+                          .read(updateRphuOrderControllerProvider.notifier)
+                          .updateRphuOrder(
+                            widget.data.id,
+                            _description.text.isEmpty
+                                ? widget.data.description
+                                : _description.text,
+                            _date.text.isEmpty ? widget.data.date : _date.text,
+                            _fromIds,
+                            _toIds,
+                            _byProductIds,
+                          );
+                    },
                     child: const Text('Ubah'),
                   ),
                 ],

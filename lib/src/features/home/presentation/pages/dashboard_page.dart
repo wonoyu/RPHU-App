@@ -72,7 +72,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with RouteAware {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () =>
+            ref.read(goRouterProvider).goNamed(AppRoutes.rphuCreateName),
         child: const Icon(
           Icons.add,
         ),
